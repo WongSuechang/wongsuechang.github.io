@@ -7,17 +7,17 @@
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="description" content="一、标识persistent=”true”的app启动过程在源码/frameworks/base/core/res/res/values/attrs_manifest.xml中这样描述： 1234&amp;lt;!-- Flag to control special persistent mode of an application. This should     not normally be use">
-<meta name="keywords" content="android学习">
+<meta name="keywords" content="android学习,frameworks">
 <meta property="og:type" content="article">
-<meta property="og:title" content="persistent=true分析">
+<meta property="og:title" content="persistent=&quot;true&quot;分析">
 <meta property="og:url" content="http://yoursite.com/2019/09/24/persistent-true分析/index.html">
 <meta property="og:site_name" content="WongSuechang&#39;s Blogs">
 <meta property="og:description" content="一、标识persistent=”true”的app启动过程在源码/frameworks/base/core/res/res/values/attrs_manifest.xml中这样描述： 1234&amp;lt;!-- Flag to control special persistent mode of an application. This should     not normally be use">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/images/binderDied.png">
-<meta property="og:updated_time" content="2019-09-24T07:44:37.008Z">
+<meta property="og:updated_time" content="2019-09-24T09:59:31.979Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="persistent=true分析">
+<meta name="twitter:title" content="persistent=&quot;true&quot;分析">
 <meta name="twitter:description" content="一、标识persistent=”true”的app启动过程在源码/frameworks/base/core/res/res/values/attrs_manifest.xml中这样描述： 1234&amp;lt;!-- Flag to control special persistent mode of an application. This should     not normally be use">
 <meta name="twitter:image" content="http://yoursite.com/images/binderDied.png">
     
@@ -39,7 +39,7 @@
         
     
     <!-- title -->
-    <title>persistent=true分析</title>
+    <title>persistent=&#34;true&#34;分析</title>
     <!-- styles -->
     <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="/lib/meslo-LG/styles.css">
@@ -103,6 +103,8 @@
     <span id="actions">
       <ul>
         
+        <li><a class="icon" href="/2019/09/24/阿里Sophix热更新从入门到应用/"><i class="fa fa-chevron-left" aria-hidden="true" onmouseover='$("#i-prev").toggle();' onmouseout='$("#i-prev").toggle();'></i></a></li>
+        
         
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up" aria-hidden="true" onmouseover='$("#i-top").toggle();' onmouseout='$("#i-top").toggle();'></i></a></li>
         <li><a class="icon" href="#"><i class="fa fa-share-alt" aria-hidden="true" onmouseover='$("#i-share").toggle();' onmouseout='$("#i-share").toggle();' onclick='$("#share").toggle();return false;'></i></a></li>
@@ -116,15 +118,15 @@
     <div id="share" style="display: none">
       <ul>
   <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2019/09/24/persistent-true分析/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2019/09/24/persistent-true分析/&text=persistent=true分析"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2019/09/24/persistent-true分析/&title=persistent=true分析"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2019/09/24/persistent-true分析/&is_video=false&description=persistent=true分析"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=persistent=true分析&body=Check out this article: http://yoursite.com/2019/09/24/persistent-true分析/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2019/09/24/persistent-true分析/&title=persistent=true分析"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2019/09/24/persistent-true分析/&title=persistent=true分析"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2019/09/24/persistent-true分析/&title=persistent=true分析"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2019/09/24/persistent-true分析/&title=persistent=true分析"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2019/09/24/persistent-true分析/&name=persistent=true分析&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2019/09/24/persistent-true分析/&text=persistent=&#34;true&#34;分析"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2019/09/24/persistent-true分析/&title=persistent=&#34;true&#34;分析"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2019/09/24/persistent-true分析/&is_video=false&description=persistent=&#34;true&#34;分析"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=persistent=&#34;true&#34;分析&body=Check out this article: http://yoursite.com/2019/09/24/persistent-true分析/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2019/09/24/persistent-true分析/&title=persistent=&#34;true&#34;分析"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2019/09/24/persistent-true分析/&title=persistent=&#34;true&#34;分析"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2019/09/24/persistent-true分析/&title=persistent=&#34;true&#34;分析"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2019/09/24/persistent-true分析/&title=persistent=&#34;true&#34;分析"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2019/09/24/persistent-true分析/&name=persistent=&#34;true&#34;分析&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -141,7 +143,7 @@
   <header>
     
     <h1 class="posttitle" itemprop="name headline">
-        persistent=true分析
+        persistent=&#34;true&#34;分析
     </h1>
 
 
@@ -159,7 +161,7 @@
       
     <div class="article-tag">
         <i class="fa fa-tag"></i>
-        <a class="tag-link" href="/tags/android学习/">android学习</a>
+        <a class="tag-link" href="/tags/android学习-frameworks/">android学习,frameworks</a>
     </div>
 
 
@@ -171,7 +173,7 @@
     <h4 id="一、标识persistent-”true”的app启动过程"><a href="#一、标识persistent-”true”的app启动过程" class="headerlink" title="一、标识persistent=”true”的app启动过程"></a>一、标识persistent=”true”的app启动过程</h4><p>在源码/frameworks/base/core/res/res/values/attrs_manifest.xml中这样描述：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- Flag to control special persistent mode of an application. This should</span><br><span class="line">     not normally be used by applications; it requires that the system keep</span><br><span class="line">     your application running at all times. --&gt;</span><br><span class="line">&lt;attr name=&quot;persistent&quot; format=&quot;boolean&quot; /&gt;</span><br></pre></td></tr></table></figure>
 
-<p>配置该属性的app有如下特点：<br>    * 在android系统启动的时候会自动启动；<br>    * app被强制杀掉后，系统会重新启动app，app必须安装在/system/app路径下</p>
+<p>配置该属性的app有如下特点：<br>    * 在android系统启动的时候会自动启动；<br>    * app被强制杀掉后，系统会重新启动app，app必须安装在/system/app路径下.</p>
 <p>app在安装或者系统启动的时候解析androidmanifest.xml文件中的persistent属性，解析源码在/frameworks/base/core/java/com/android/content/pm/PackageParser.java</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">private boolean parseBaseApplication(Package owner, Resources res,</span><br><span class="line">                                     XmlPullParser parser,</span><br><span class="line">                                     AttributeSet attrs,</span><br><span class="line">                                     int flags,</span><br><span class="line">                                     String[] outError)</span><br><span class="line">                                     throws XmlPullParserException, IOException &#123;</span><br><span class="line">    // ............</span><br><span class="line">    if ((flags&amp;PARSE_IS_SYSTEM) != 0) &#123;</span><br><span class="line">         if (sa.getBoolean(</span><br><span class="line">                 com.android.internal</span><br><span class="line">                    .R.styleable.AndroidManifestApplication_persistent,</span><br><span class="line">                 false)) &#123;</span><br><span class="line">             ai.flags |= ApplicationInfo.FLAG_PERSISTENT;</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line">     // ............</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -223,15 +225,15 @@
     <div id="share-footer" style="display: none">
       <ul>
   <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2019/09/24/persistent-true分析/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2019/09/24/persistent-true分析/&text=persistent=true分析"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2019/09/24/persistent-true分析/&title=persistent=true分析"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2019/09/24/persistent-true分析/&is_video=false&description=persistent=true分析"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=persistent=true分析&body=Check out this article: http://yoursite.com/2019/09/24/persistent-true分析/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2019/09/24/persistent-true分析/&title=persistent=true分析"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2019/09/24/persistent-true分析/&title=persistent=true分析"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2019/09/24/persistent-true分析/&title=persistent=true分析"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2019/09/24/persistent-true分析/&title=persistent=true分析"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2019/09/24/persistent-true分析/&name=persistent=true分析&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2019/09/24/persistent-true分析/&text=persistent=&#34;true&#34;分析"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2019/09/24/persistent-true分析/&title=persistent=&#34;true&#34;分析"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2019/09/24/persistent-true分析/&is_video=false&description=persistent=&#34;true&#34;分析"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=persistent=&#34;true&#34;分析&body=Check out this article: http://yoursite.com/2019/09/24/persistent-true分析/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2019/09/24/persistent-true分析/&title=persistent=&#34;true&#34;分析"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2019/09/24/persistent-true分析/&title=persistent=&#34;true&#34;分析"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2019/09/24/persistent-true分析/&title=persistent=&#34;true&#34;分析"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2019/09/24/persistent-true分析/&title=persistent=&#34;true&#34;分析"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2019/09/24/persistent-true分析/&name=persistent=&#34;true&#34;分析&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
