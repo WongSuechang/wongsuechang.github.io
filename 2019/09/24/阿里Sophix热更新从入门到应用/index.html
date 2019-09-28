@@ -15,7 +15,7 @@
 <meta property="og:description" content="1.引言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;用户在某些情况下不愿意手动点击更新，同时产品提出公司App做到无感修复更新。综合考虑各大厂商热更新方案，倾向于阿里的Sophix方案，原因如下： 1. so文件替换更新 2. 资源文件替换 3. 尽量可以做到实时修复&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbs">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/images/hot_fix.png">
-<meta property="og:updated_time" content="2019-09-25T10:27:22.110Z">
+<meta property="og:updated_time" content="2019-09-28T08:55:48.007Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="阿里Sophix热更新从入门到应用">
 <meta name="twitter:description" content="1.引言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;用户在某些情况下不愿意手动点击更新，同时产品提出公司App做到无感修复更新。综合考虑各大厂商热更新方案，倾向于阿里的Sophix方案，原因如下： 1. so文件替换更新 2. 资源文件替换 3. 尽量可以做到实时修复&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbs">
@@ -181,7 +181,15 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">compile &apos;com.aliyun.ams:alicloud-android-hotfix:3.2.8&apos;</span><br></pre></td></tr></table></figure>
 
 <p><strong>注意：使用android studio打包生成apk时，要关闭instant run。</strong></p>
-<h4 id="2-2-权限"><a href="#2-2-权限" class="headerlink" title="2.2 权限"></a>2.2 权限<br></h4><h4 id="2-3-AndroidManifest文件配置"><a href="#2-3-AndroidManifest文件配置" class="headerlink" title="2.3 AndroidManifest文件配置"></a>2.3 AndroidManifest文件配置<br></h4>
+<h4 id="2-2-权限"><a href="#2-2-权限" class="headerlink" title="2.2 权限"></a>2.2 权限<br></h4><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sophix SDK使用到以下权限</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;! -- 网络权限 --&gt;</span><br><span class="line">&lt;uses-permission android:name=&quot;android.permission.INTERNET&quot; /&gt;</span><br><span class="line">&lt;uses-permission android:name=&quot;android.permission.ACCESS_NETWORK_STATE&quot; /&gt;</span><br><span class="line">&lt;uses-permission android:name=&quot;android.permission.ACCESS_WIFI_STATE&quot; /&gt;</span><br><span class="line">&lt;! -- 外部存储读权限，调试工具加载本地补丁需要 --&gt;</span><br><span class="line">&lt;uses-permission android:name=&quot;android.permission.READ_EXTERNAL_STORAGE&quot;/&gt;</span><br></pre></td></tr></table></figure>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;READ_EXTERNAL_STORAGE权限属于Dangerous Permissions，仅调试工具获取外部补丁需要，不影响线上发布的补丁加载，调试时请自行做好android6.0以上的运行时权限获取。</p>
+<h4 id="2-3-AndroidManifest文件配置"><a href="#2-3-AndroidManifest文件配置" class="headerlink" title="2.3 AndroidManifest文件配置"></a>2.3 AndroidManifest文件配置<br></h4><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在 <strong>AndroidManifest.xml</strong> 中间的 <strong>application</strong>节点下添加如下配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;meta-data</span><br><span class="line">android:name=&quot;com.taobao.android.hotfix.IDSECRET&quot;</span><br><span class="line">android:value=&quot;App ID&quot; /&gt;</span><br><span class="line">&lt;meta-data</span><br><span class="line">android:name=&quot;com.taobao.android.hotfix.APPSECRET&quot;</span><br><span class="line">android:value=&quot;App Secret&quot; /&gt;</span><br><span class="line">&lt;meta-data</span><br><span class="line">android:name=&quot;com.taobao.android.hotfix.RSASECRET&quot;</span><br><span class="line">android:value=&quot;RSA密钥&quot; /&gt;</span><br></pre></td></tr></table></figure>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;将上述value中的值分别改为通过平台HotFix服务申请得到的App Secret和RSA密钥，出于安全考虑，建议使用setSecretMetaData这个方法进行设置。<br><br><strong>另外，热修复暂不支持EMAS统一插件的json文件读取。</strong></p>
+
   </div>
 </article>
 
