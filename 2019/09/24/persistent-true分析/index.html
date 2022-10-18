@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>persistent=&#34;true&#34;分析 | WongSuechang&#39;s Blogs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="android学习,frameworks">
+    <meta name="description" content="一、标识persistent&#x3D;”true”的app启动过程&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在源码&#x2F;frameworks&#x2F;base&#x2F;core&#x2F;res&#x2F;res&#x2F;values&#x2F;attrs_manif">
+<meta property="og:type" content="article">
+<meta property="og:title" content="persistent&#x3D;&quot;true&quot;分析">
+<meta property="og:url" content="http://wongsuechang.github.io/2019/09/24/persistent-true%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="WongSuechang&#39;s Blogs">
+<meta property="og:description" content="一、标识persistent&#x3D;”true”的app启动过程&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在源码&#x2F;frameworks&#x2F;base&#x2F;core&#x2F;res&#x2F;res&#x2F;values&#x2F;attrs_manif">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://wongsuechang.github.io/images/binderDied.png">
+<meta property="article:published_time" content="2019-09-24T07:11:19.000Z">
+<meta property="article:modified_time" content="2019-10-29T19:53:36.000Z">
+<meta property="article:author" content="Wong Suechang">
+<meta property="article:tag" content="android学习">
+<meta property="article:tag" content="frameworks">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wongsuechang.github.io/images/binderDied.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="WongSuechang&#39;s Blogs" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/wongsuechang.png">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Wong Suechang</h5>
+          <a href="mailto:semp@live.cn" title="semp@live.cn" class="mail">semp@live.cn</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                文章
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/%E5%85%B3%E4%BA%8E%E6%88%91"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                关于我
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/wongsuechang" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">persistent=&#34;true&#34;分析</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">persistent=&#34;true&#34;分析</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-09-24T07:11:19.000Z" itemprop="datePublished" class="page-time">
+  2019-09-24
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+
+<article id="post-persistent-true分析"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">persistent="true"分析</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-09-24 15:11:19" datetime="2019-09-24T07:11:19.000Z"  itemprop="datePublished">2019-09-24</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h4 id="一、标识persistent-x3D-”true”的app启动过程"><a href="#一、标识persistent-x3D-”true”的app启动过程" class="headerlink" title="一、标识persistent&#x3D;”true”的app启动过程"></a>一、标识persistent&#x3D;”true”的app启动过程<br></h4><p>&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在源码&#x2F;frameworks&#x2F;base&#x2F;core&#x2F;res&#x2F;res&#x2F;values&#x2F;attrs_manifest.xml中这样描述：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- Flag to control special persistent mode of an application. This should</span><br><span class="line">     not normally be used by applications; it requires that the system keep</span><br><span class="line">     your application running at all times. --&gt;</span><br><span class="line">&lt;attr name=&quot;persistent&quot; format=&quot;boolean&quot; /&gt;</span><br></pre></td></tr></table></figure>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;配置该属性的app有如下特点：<br>
+
+<pre><code>* 在android系统启动的时候会自动启动；
+* app被强制杀掉后，系统会重新启动app，app必须安装在/system/app路径下。
+</code></pre>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;app在安装或者系统启动的时候解析androidmanifest.xml文件中的persistent属性，解析源码在/frameworks/base/core/java/com/android/content/pm/PackageParser.java
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">private boolean parseBaseApplication(Package owner, Resources res,</span><br><span class="line">                                     XmlPullParser parser,</span><br><span class="line">                                     AttributeSet attrs,</span><br><span class="line">                                     int flags,</span><br><span class="line">                                     String[] outError)</span><br><span class="line">                                     throws XmlPullParserException, IOException &#123;</span><br><span class="line">    // ............</span><br><span class="line">    if ((flags&amp;PARSE_IS_SYSTEM) != 0) &#123;</span><br><span class="line">         if (sa.getBoolean(</span><br><span class="line">                 com.android.internal</span><br><span class="line">                    .R.styleable.AndroidManifestApplication_persistent,</span><br><span class="line">                 false)) &#123;</span><br><span class="line">             ai.flags |= ApplicationInfo.FLAG_PERSISTENT;</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line">     // ............</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;系统启动，在systemReady()加载所有persistent&#x3D;true的应用。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public void systemReady(final Runnable goingCallback) &#123;</span><br><span class="line">     // ............</span><br><span class="line">     try &#123;</span><br><span class="line">          List apps = AppGlobals.getPackageManager()</span><br><span class="line">                            .getPersistentApplications(STOCK_PM_FLAGS);</span><br><span class="line">          if (apps != null) &#123;</span><br><span class="line">              int N = apps.size();</span><br><span class="line">              int i;</span><br><span class="line">              for (i=0; i&lt;N; i++) &#123;</span><br><span class="line">                  ApplicationInfo info = (ApplicationInfo)apps.get(i);</span><br><span class="line">                  if (info != null &amp;&amp;</span><br><span class="line">                          !info.packageName.equals(&quot;android&quot;))</span><br><span class="line">                      &#123;</span><br><span class="line">                         addAppLocked(info, false);</span><br><span class="line">                      &#125;</span><br><span class="line">              &#125;</span><br><span class="line">          &#125;</span><br><span class="line">      &#125; catch (RemoteException ex) &#123;</span><br><span class="line">          // pm is in same process, this will never happen.</span><br><span class="line">      &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;其中 getPersistentApplications()函数的定义如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">public List&lt;ApplicationInfo&gt; getPersistentApplications(int flags) &#123;</span><br><span class="line">      final ArrayList&lt;ApplicationInfo&gt; finalList</span><br><span class="line">         = new ArrayList&lt;ApplicationInfo&gt;();</span><br><span class="line">      // reader</span><br><span class="line">      synchronized (mPackages)</span><br><span class="line">      &#123;</span><br><span class="line">          final Iterator&lt;PackageParser.Package&gt; i</span><br><span class="line">             = mPackages.values().iterator();</span><br><span class="line">          final int userId = UserId.getCallingUserId();</span><br><span class="line">          while (i.hasNext())</span><br><span class="line">          &#123;</span><br><span class="line">              final PackageParser.Package p = i.next();</span><br><span class="line">              if (p.applicationInfo != null</span><br><span class="line">                  &amp;&amp; (p.applicationInfo.flags</span><br><span class="line">                         &amp; ApplicationInfo.FLAG_PERSISTENT) != 0</span><br><span class="line">                  &amp;&amp; (!mSafeMode || isSystemApp(p)))</span><br><span class="line">              &#123;</span><br><span class="line">                  PackageSetting ps = mSettings</span><br><span class="line">                    .mPackages.get(p.packageName);</span><br><span class="line">                  finalList.add(PackageParser.generateApplicationInfo(p, flags,</span><br><span class="line">                          ps != null ? ps.getStopped(userId) : false,</span><br><span class="line">                          ps != null ? ps.getEnabled(userId) : COMPONENT_ENABLED_STATE_DEFAULT,</span><br><span class="line">                          userId));</span><br><span class="line">              &#125;</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      return finalList;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在PKMS中，有一个记录所有的程序包信息的哈希表（mPackages），每个表项中含有ApplicationInfo信息，该信息的flags（int型）数据中有一个专门的bit用于表示persistent。getPersistentApplications()函数会遍历这张表，找出所有persistent包，如果选中的persistent包是系统应用，或者当前系统处于非安全模式，则将persistent包添加到ArrayList<ApplicationInfo>。</p>
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;随后systemReady()开始遍历选中的ApplicationInfo，并对包名不为“android”的结点执行addAppLocked()。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">final ProcessRecord addAppLocked(ApplicationInfo info, boolean isolated) &#123;</span><br><span class="line">     ProcessRecord app;</span><br><span class="line">     if (!isolated) &#123;</span><br><span class="line">         app = getProcessRecordLocked(info.processName, info.uid);</span><br><span class="line">     &#125; else &#123;</span><br><span class="line">         app = null;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     if (app == null) &#123;</span><br><span class="line">         app = newProcessRecordLocked(null, info, null, isolated);</span><br><span class="line">         mProcessNames.put(info.processName, app.uid, app);</span><br><span class="line">         if (isolated) &#123;</span><br><span class="line">             mIsolatedProcesses.put(app.uid, app);</span><br><span class="line">         &#125;</span><br><span class="line">         updateLruProcessLocked(app, true, true);</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     // This package really, really can not be stopped.</span><br><span class="line">     try &#123;</span><br><span class="line">         AppGlobals</span><br><span class="line">            .getPackageManager()</span><br><span class="line">            .setPackageStoppedState( info.packageName, false, UserId.getUserId(app.uid));</span><br><span class="line">     &#125; catch (RemoteException e) &#123;</span><br><span class="line">     &#125; catch (IllegalArgumentException e) &#123;</span><br><span class="line">         Slog.w(TAG, &quot;Failed trying to unstop package &quot; + info.packageName + &quot;: &quot; + e);</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     if ((info.flags&amp;(ApplicationInfo.FLAG_SYSTEM|ApplicationInfo.FLAG_PERSISTENT))</span><br><span class="line">             == (ApplicationInfo.FLAG_SYSTEM|ApplicationInfo.FLAG_PERSISTENT)) &#123;</span><br><span class="line">         app.persistent = true;</span><br><span class="line">         app.maxAdj = ProcessList.PERSISTENT_PROC_ADJ;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     if (app.thread == null</span><br><span class="line">             &amp;&amp; mPersistentStartingProcesses.indexOf(app) &lt; 0) &#123;</span><br><span class="line">         mPersistentStartingProcesses.add(app);</span><br><span class="line">         startProcessLocked(app, &quot;added application&quot;, app.processName);</span><br><span class="line">     &#125;</span><br><span class="line">     return app;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在AMS中，所谓的“add App”主要是指“添加一个与App进程对应的ProcessRecord节点”。在添加节点的动作完成以后，addAppLocked()还会检查App进程是否已经启动好了，如果尚未开始启动，此时就会调用startProcessLocked()启动这个进程。既然addAppLocked()试图确认App“正在正常运作”或者“将被正常启动”，那么其对应的package就不可能处于stopped状态。</p>
+<p>&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;自此，我们已知设置了persistent&#x3D;”true”的应用是随着系统启动就即时启动了。</p>
+<h4 id="二、如何保持应用的持久性（persistent）"><a href="#二、如何保持应用的持久性（persistent）" class="headerlink" title="二、如何保持应用的持久性（persistent）"></a>二、如何保持应用的持久性（persistent）<br></h4><p>&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;本身persistent一词翻译过来即持久、固执的意思。在android系统内，persistent应用会随着系统启动而启动，一直持续到系统关机。<br><br><br>&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;为了保证这种持久性，persistent应用必须能够在异常出现时，自动重新启动。在Android里是这样实现的。每个ActivityThread中会有一个专门和AMS通信的binder实体——final ApplicationThread mAppThread。这个实体在AMS中对应的代理接口为IApplicationThread。<br><br><br>&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;当AMS执行到attachApplicationLocked()时，会针对目标用户进程的IApplicationThread接口，注册一个binder讣告监听器，一旦日后用户进程意外挂掉，AMS就能在第一时间感知到，并采取相应的措施。如果AMS发现意外挂掉的应用是persistent的，它会尝试重新启动这个应用。<br><br></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">private final class AppDeathRecipient implements IBinder.DeathRecipient &#123;</span><br><span class="line">     final ProcessRecord mApp;</span><br><span class="line">     final int mPid;</span><br><span class="line">     final IApplicationThread mAppThread;</span><br><span class="line">     AppDeathRecipient(ProcessRecord app, int pid, IApplicationThread thread) &#123;</span><br><span class="line">         if (localLOGV)</span><br><span class="line">             Slog.v(TAG, &quot;New death recipient &quot; + this + &quot; for thread &quot; + thread.asBinder());</span><br><span class="line">             mApp = app;</span><br><span class="line">             mPid = pid;</span><br><span class="line">             mAppThread = thread;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     public void binderDied() &#123;</span><br><span class="line">         if (localLOGV)</span><br><span class="line">             Slog.v(TAG, &quot;Death received in &quot; + this + &quot; for thread &quot; + mAppThread.asBinder());</span><br><span class="line">         synchronized(ActivityManagerService.this) &#123;</span><br><span class="line">             appDiedLocked(mApp, mPid, mAppThread);</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+ <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当其监听的binder实体死亡时，系统会回调AppDeathRecipient的binderDied()。<br>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="../../../../images/binderDied.png" alt="image" title="">
+                </div>
+                <div class="image-caption">image</div>
+            </figure>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一般情况下，当一个应用进程挂掉后，AMS当然会清理掉其对应的ProcessRecord，这就是cleanUpApplicationRecordLocked()的主要工作。然而，对于persistent应用，cleanUpApplicationRecordLocked()会尝试再次启动对应的应用进程。
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2019-10-29T19:53:36.000Z" itemprop="dateUpdated">2019-10-30 03:53:36</time>
+</span><br>
+
+
+        
+        <a href="/2019/09/24/persistent-true%E5%88%86%E6%9E%90/" target="_blank" rel="external">http://wongsuechang.github.io/2019/09/24/persistent-true%E5%88%86%E6%9E%90/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="http://wongsuechang.github.io">
+            <img src="/img/wongsuechang.png" alt="Wong Suechang">
+            Wong Suechang
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android%E5%AD%A6%E4%B9%A0/" rel="tag">android学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/frameworks/" rel="tag">frameworks</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wongsuechang.github.io/2019/09/24/persistent-true%E5%88%86%E6%9E%90/&title=《persistent="true"分析》 — WongSuechang's Blogs&pic=http://wongsuechang.github.io/img/wongsuechang.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wongsuechang.github.io/2019/09/24/persistent-true%E5%88%86%E6%9E%90/&title=《persistent="true"分析》 — WongSuechang's Blogs&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wongsuechang.github.io/2019/09/24/persistent-true%E5%88%86%E6%9E%90/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《persistent="true"分析》 — WongSuechang's Blogs&url=http://wongsuechang.github.io/2019/09/24/persistent-true%E5%88%86%E6%9E%90/&via=http://wongsuechang.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wongsuechang.github.io/2019/09/24/persistent-true%E5%88%86%E6%9E%90/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/09/24/%E9%98%BF%E9%87%8CSophix%E7%83%AD%E6%9B%B4%E6%96%B0%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%BA%94%E7%94%A8/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">阿里Sophix热更新从入门到应用</h4>
+      </a>
+    </div>
+  
+
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        您的支持是我的动力
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/alipay.png" alt="打赏二维码">
+        </div>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license noopener" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Wong Suechang &copy; 2019 - 2022</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wongsuechang.github.io/2019/09/24/persistent-true%E5%88%86%E6%9E%90/&title=《persistent="true"分析》 — WongSuechang's Blogs&pic=http://wongsuechang.github.io/img/wongsuechang.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wongsuechang.github.io/2019/09/24/persistent-true%E5%88%86%E6%9E%90/&title=《persistent="true"分析》 — WongSuechang's Blogs&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wongsuechang.github.io/2019/09/24/persistent-true%E5%88%86%E6%9E%90/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《persistent="true"分析》 — WongSuechang's Blogs&url=http://wongsuechang.github.io/2019/09/24/persistent-true%E5%88%86%E6%9E%90/&via=http://wongsuechang.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wongsuechang.github.io/2019/09/24/persistent-true%E5%88%86%E6%9E%90/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wongsuechang.github.io/2019/09/24/persistent-true%E5%88%86%E6%9E%90/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = 'Change no world.';
+            clearTimeout(titleTime);
+        } else {
+            document.title = 'Write the code.';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>
